@@ -107,10 +107,10 @@ def generate_launch_description():
         name='throttle_interpolator',
         parameters=[LaunchConfiguration('vesc_config')]
     )
-    urg_node = Node(
-        package='urg_node',
-        executable='urg_node_driver',
-        name='urg_node',
+    rplidar_ros = Node(
+        package='rplidar_ros',
+        executable='rplidar_node',
+        name='rplidar_ros',
         parameters=[LaunchConfiguration('sensors_config')]
     )
     ackermann_mux_node = Node(
@@ -134,7 +134,7 @@ def generate_launch_description():
     ld.add_action(vesc_to_odom_node)
     ld.add_action(vesc_driver_node)
     # ld.add_action(throttle_interpolator_node)
-    ld.add_action(urg_node)
+    ld.add_action(rplidar_ros)
     ld.add_action(ackermann_mux_node)
     ld.add_action(static_tf_node)
 
