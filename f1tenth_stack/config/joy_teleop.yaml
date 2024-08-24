@@ -3,7 +3,7 @@ joy:
     # device_name: /dev/input/joypad-f710
     device_id: 0
     deadzone: 0.01
-    autorepeat_rate: 20.0
+    autorepeat_rate: 30.0
     coalesce_interval: 0.01
 
 joy_teleop:
@@ -16,11 +16,11 @@ joy_teleop:
       axis_mappings:
         drive-speed:
           axis: 4
-          scale: 5.0
+          scale: 1.5
           offset: 0.0
         drive-steering_angle:
           axis: 0
-          scale: 0.34
+          scale: -0.28
           offset: 0.0
 
     autonomous_control:
