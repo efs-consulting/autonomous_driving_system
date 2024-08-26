@@ -26,11 +26,15 @@ from launch.substitutions import Command
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
+import launch_ros
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
+    pkg_share_robot_model = launch_ros.substitutions.FindPackageShare(package='robot_description').find('robot_description')
+    default_model_path = os.path.join(pkg_share_robot_model, 'src/description/f1tenth_tt02.urdf')
+
     joy_teleop_config = os.path.join(
         get_package_share_directory('f1tenth_stack'),
         'config',
@@ -120,11 +124,16 @@ def generate_launch_description():
         parameters=[LaunchConfiguration('mux_config')],
         remappings=[('ackermann_drive_out', 'ackermann_cmd')]
     )
-    static_tf_node = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_baselink_to_laser',
-        arguments=['0.07', '0.0', '0.12', '0.0', '0.0', '0.0', 'base_link', 'laser']
+    #static_tf_node = Node(
+    #    package='tf2_ros',
+    #    executable='static_transform_publisher',
+    #    name='static_baselink_to_laser',
+    #    arguments=['0.07', '0.0', '0.12', '0.0', '0.0', '0.0', 'base_link', 'laser']
+    #)
+    robot_state_publisher_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': Command(['xacro ', LaunchConfiguration('model')])}]
     )
 
     # finalize
@@ -136,6 +145,11 @@ def generate_launch_description():
     # ld.add_action(throttle_interpolator_node)
     ld.add_action(sllidar_ros2)
     ld.add_action(ackermann_mux_node)
-    ld.add_action(static_tf_node)
+    #ld.add_action(static_tf_node)
+
+    ld.add_action(DeclareLaunchArgument(name='model', default_value=default_model_path,
+                                            description='Absolute path to robot urdf file'),)
+    ld.add_action(robot_state_publisher_node)
+
 
     return ld
