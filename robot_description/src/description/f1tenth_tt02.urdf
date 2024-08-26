@@ -5,37 +5,104 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="racecar">
 
   <xacro:property name="wheelbase" value="0.251" />
+  <xacro:property name="front_bumper" value="0.09" />
+  <xacro:property name="rear_bumper" value="0.1" />
+  <xacro:property name="bumper_height" value="0.03" />
   <xacro:property name="width" value="0.13" />
-  <xacro:property name="height" value="0.11" />
+  <xacro:property name="height" value="0.06" />
   <xacro:property name="ground_offset" value="0.01" />
   <xacro:property name="wheel_radius" value="0.033" />
   <xacro:property name="wheel_length" value="0.027" />
-  <xacro:property name="laser_distance_from_base_link" value="0.06" />
+  <xacro:property name="laser_distance_from_base_vehicle" value="0.06" />
   <xacro:property name="laser_height" value="0.04" />
   <xacro:property name="laser_radius" value="0.026" />
+  <xacro:property name="laser_offset" value="0.05" />
+  <xacro:property name="computer_height" value="0.05" />
 
   <material name="black">
     <color rgba="0.2 0.2 0.2 1."/>
   </material>
 
-  <material name="blue">
-    <color rgba="0.3 0.57 1. 1."/>
+  <material name="body">
+    <color rgba="0 0 0.6 1."/>
+  </material>
+
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1."/>
+  </material>
+
+  <material name="red">
+    <color rgba="1. 0.3 0.3 1."/>
   </material>
 
   <link name="base_link">
+  </link>
+
+ <joint name="base_link_to_base_vehicle" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_vehicle"/>
+    <origin rpy="0 0 3.1416"/>
+  </joint>
+
+  <link name="base_vehicle">
     <visual>
-      <origin xyz="${wheelbase/2} 0 ${ground_offset+height/2}"/>
+      <origin xyz="${wheelbase/2} 0 ${ground_offset+height/2}" />
       <geometry>
         <box size="${wheelbase} ${width} ${height}"/>
       </geometry>
-      <material name="blue"/>
+      <material name="body"/>
+    </visual>
+  </link>
+
+  <joint name="base_vehicle_to_front_bumper" type="fixed">
+    <parent link="base_vehicle"/>
+    <child link="front_bumper"/>
+    <origin xyz="${(wheelbase)+(front_bumper/2)} 0 ${ground_offset+(bumper_height/2)}" />
+  </joint>
+
+  <link name="front_bumper">
+    <visual>      
+      <geometry>
+        <box size="${front_bumper} ${width} ${bumper_height}"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+  </link>
+
+  <joint name="base_vehicle_to_rear_bumper" type="fixed">
+    <parent link="base_vehicle"/>
+    <child link="rear_bumper"/>
+    <origin xyz="${-(rear_bumper/2)} 0 ${ground_offset+(bumper_height/2)}" />
+  </joint>
+
+  <link name="rear_bumper">
+    <visual>      
+      <geometry>
+        <box size="${rear_bumper} ${width} ${bumper_height}"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+  </link>
+
+  <joint name="base_vehicle_to_computer" type="fixed">
+    <parent link="base_vehicle"/>
+    <child link="computer"/>
+    <origin xyz="${wheelbase/4} 0 ${ground_offset+height+(computer_height/2)}" />
+  </joint>
+
+  <link name="computer">
+    <visual>      
+      <geometry>
+        <box size="${wheelbase/2} ${width} ${computer_height}"/>
+      </geometry>
+      <material name="red"/>
     </visual>
   </link>
 
   <joint name="base_to_laser" type="fixed">
-    <parent link="base_link"/>
+    <parent link="base_vehicle"/>
     <child link="laser"/>
-    <origin xyz="${laser_distance_from_base_link} 0 ${ground_offset+height+(laser_height/2)}"/>
+    <origin xyz="${laser_distance_from_base_vehicle} 0 ${ground_offset+height+(laser_height/2)+laser_offset}" rpy="0 0 3.1416"/>
   </joint>
 
   <link name="laser">
@@ -48,7 +115,7 @@
   </link>
 
   <joint name="base_to_back_left_wheel" type="fixed">
-    <parent link="base_link"/>
+    <parent link="base_vehicle"/>
     <child link="back_left_wheel"/>
     <origin xyz="0 ${(wheel_length+width)/2} ${wheel_radius}"/>
   </joint>
@@ -64,7 +131,7 @@
   </link>
 
   <joint name="base_to_back_right_wheel" type="fixed">
-    <parent link="base_link"/>
+    <parent link="base_vehicle"/>
     <child link="back_right_wheel"/>
     <origin xyz="0 ${-(wheel_length+width)/2} ${wheel_radius}"/>
   </joint>
@@ -80,14 +147,14 @@
   </link>
 
   <joint name="base_to_front_left_hinge" type="fixed">
-    <parent link="base_link"/>
+    <parent link="base_vehicle"/>
     <child link="front_left_hinge"/>
     <origin xyz="${wheelbase} ${(wheel_length+width)/2} ${wheel_radius}"/>
   </joint>
 
   <link name="front_left_hinge"/>
 
-  <joint name="front_left_hinge_to_wheel" type="continuous">
+  <joint name="front_left_hinge_to_wheel" type="fixed">
     <parent link="front_left_hinge"/>
     <child link="front_left_wheel"/>
   </joint>
@@ -103,14 +170,14 @@
   </link>
 
   <joint name="base_to_front_right_hinge" type="fixed">
-    <parent link="base_link"/>
+    <parent link="base_vehicle"/>
     <child link="front_right_hinge"/>
     <origin xyz="${wheelbase} ${-(wheel_length+width)/2} ${wheel_radius}"/>
   </joint>
 
   <link name="front_right_hinge"/>
 
-  <joint name="front_right_hinge_to_wheel" type="continuous">
+  <joint name="front_right_hinge_to_wheel" type="fixed">
     <parent link="front_right_hinge"/>
     <child link="front_right_wheel"/>
   </joint>
