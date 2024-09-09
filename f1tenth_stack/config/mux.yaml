@@ -3,9 +3,14 @@ ackermann_mux:
     topics:
       navigation:
         topic   : ack_vel
-        timeout : 0.1
+        timeout : 0.2
         priority: 10
       joystick:
         topic   : teleop
-        timeout : 0.1
+        timeout : 0.2
         priority: 100
+    #locks:
+    #  stop_navigation:
+    #    topic   : pause_navigation
+    #    timeout : 0.5
+    #    priority: 100

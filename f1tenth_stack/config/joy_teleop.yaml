@@ -1,6 +1,6 @@
 joy:
   ros__parameters:
-    # device_name: /dev/input/joypad-f710
+    #device_name: /dev/input/joypad-f710
     device_id: 0
     deadzone: 0.01
     autorepeat_rate: 30.0
@@ -25,9 +25,9 @@ joy_teleop:
 
     autonomous_control:
       type: topic
-      interface_type: std_msgs/msg/Int8
-      topic_name: /dev/null
+      interface_type: std_msgs/msg/Bool
+      topic_name: pause_navigation
       deadman_buttons: [5]
       message_value:
         data:
-          value: 0
+          value: False
