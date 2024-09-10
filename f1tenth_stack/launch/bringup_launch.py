@@ -111,10 +111,10 @@ def generate_launch_description():
         name='throttle_interpolator',
         parameters=[LaunchConfiguration('vesc_config')]
     )
-    sllidar_ros2 = Node(
-        package='sllidar_ros2',
-        executable='sllidar_node',
-        name='sllidar_node',
+    rplidar_node = Node(
+        package='rplidar_ros',
+        executable='rplidar_node',
+        name='rplidar_node',
         parameters=[LaunchConfiguration('sensors_config')]
     )
     ackermann_mux_node = Node(
@@ -124,12 +124,6 @@ def generate_launch_description():
         parameters=[LaunchConfiguration('mux_config')],
         remappings=[('ackermann_drive_out', 'ackermann_cmd')]
     )
-    #static_tf_node = Node(
-    #    package='tf2_ros',
-    #    executable='static_transform_publisher',
-    #    name='static_baselink_to_laser',
-    #    arguments=['0.07', '0.0', '0.12', '0.0', '0.0', '0.0', 'base_link', 'laser']
-    #)
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -142,10 +136,8 @@ def generate_launch_description():
     ld.add_action(ackermann_to_vesc_node)
     ld.add_action(vesc_to_odom_node)
     ld.add_action(vesc_driver_node)
-    # ld.add_action(throttle_interpolator_node)
-    ld.add_action(sllidar_ros2)
+    ld.add_action(rplidar_node)
     ld.add_action(ackermann_mux_node)
-    #ld.add_action(static_tf_node)
 
     ld.add_action(DeclareLaunchArgument(name='model', default_value=default_model_path,
                                             description='Absolute path to robot urdf file'),)
